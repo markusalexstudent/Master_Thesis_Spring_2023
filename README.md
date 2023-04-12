@@ -5,7 +5,7 @@ Master thesis in Financial Economics at NHH spring 2023. All files related to th
 General Info: 
 - The R-script is split into parts, and should be run chronologically 
 - All data is available in the data folder
-- You do not need to run the script from "scratch". Just download the data, set working directionary in the script and then run the script. 
+- You do not need to run the script from "scratch", i.e. web scrape and run ML/OpenAI Models (these are quite time consuming). Just download the data, set working directionary in the script and then run the script. 
 
 What you need to run the complete script: 
 - OpenAI API key. Create an account on https://openai.com/
