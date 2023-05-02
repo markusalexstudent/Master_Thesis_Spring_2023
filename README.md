@@ -83,7 +83,7 @@ openai <- import("openai")
 openai$api_key <- openai_key
 
 ```
-### Example of API call:
+### Example of API call to OpenAI:
 ```r
 response_list <- list()
 
