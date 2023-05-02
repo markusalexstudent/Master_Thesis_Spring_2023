@@ -3,7 +3,7 @@
 Master thesis in Financial Economics at NHH spring 2023. All files related to the project lies here. 
  
 
-# Info
+## Info
 General Info: 
 - The R-script is split into parts, and should be run chronologically. 
 - Data is in the "data" folder.
@@ -21,8 +21,8 @@ What you need to run the complete script (besides packages in the script):
 
 Below, key parts of the script is added (models, fine-tuning, packages). See the script folder for compelte script.
 
-# Extracts from R script
-## R Libraries:
+## Extracts from R script
+### R Libraries:
 ```r 
 library(eikonapir)                        # Refinitiv Eikon API for R
 library(RSelenium)                        # Docker and Selenium
@@ -61,7 +61,7 @@ library(DescTools)                        # Winsorize
 library(wordcloud2)                       # devtools::install_github("lchiffon/wordcloud2")
 
 ```
-## Refinitiv Eikon API for R:
+### Refinitiv Eikon API for R:
 ```r
 install_github("ahmedmohamedali/eikonapir") # Installation of Eikon API for R
 
@@ -83,7 +83,7 @@ openai <- import("openai")
 openai$api_key <- openai_key
 
 ```
-## Example of API call:
+### Example of API call:
 ```r
 response_list <- list()
 
@@ -135,7 +135,7 @@ colnames(response) <- "score"
 meta_openai$sentiment_openai <- response$score
 ```
 
-## Example of fine-tuned OpenAI model: 
+### Example of fine-tuned OpenAI model: 
 ```r
 #-------------------------------------------------------------------------------
 # Create FT-model
@@ -267,7 +267,7 @@ colnames(response) <- "score"
 ```
 
 
-## Example of robust MNIR function (tweaked with IDF):
+### Example of robust MNIR function (tweaked with IDF):
 Inspired by: 
 - Taddy: https://arxiv.org/abs/1012.2098
 - Garcia: https://www.sciencedirect.com/science/article/abs/pii/S0304405X22002422
