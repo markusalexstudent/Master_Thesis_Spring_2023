@@ -130,3 +130,255 @@ response_list <- lapply(response_list, function(x) {
 response <- bind_rows(response_list)
 colnames(response) <- "score"
 meta_openai$sentiment_openai <- response$score
+```
+
+## Example of fine-tuned OpenAI model: 
+```r
+#-------------------------------------------------------------------------------
+# Create FT-model
+#-------------------------------------------------------------------------------
+meta_finetuned <- read.xlsx("openai_data/openai_finetuned_training_data.xlsx")
+meta_finetuned <- na.omit(meta_finetuned)
+
+# Add white space: 
+meta_finetuned$classification <- paste0(" ", meta_finetuned$classification)
+meta_finetuned <- data.frame(prompt = paste0(meta_finetuned$text,"\n\n###\n\n"), 
+                             completion = paste0(meta_finetuned$classification, "\n"))
+
+# create a list to store the JSON objects
+json_list <- list()
+
+# iterate over the dataframe and create a JSON object for each row
+for (i in 1:nrow(meta_finetuned)) {
+  # create a JSON object for the row
+  data <- toJSON(list(prompt = meta_finetuned[i, "prompt"], completion = meta_finetuned[i, "completion"]))
+  # append the JSON object to the list
+  json_list[[i]] <- data
+}
+
+# combine the list of JSON objects into a JSONL string
+jsonl_string <- paste(json_list, collapse = "\n")
+jsonl_string <- gsub("\\[|\\]", "", jsonl_string) # String must be cleaned for "[" "]" to be able to upload
+
+# write the JSONL string to a file
+cat(jsonl_string, file = "prompt_curie_finetuned.jsonl")
+
+# Create path to upload file
+file = paste0(getwd(), "/prompt_curie_finetuned.jsonl")
+training_info <- upload_file(file = file, purpose = "fine-tune", openai_api_key = openai_key)
+
+# Crate fine tuning model:
+info <- create_fine_tune(
+  training_file = training_info$id,
+  model = c("curie"),
+  n_epochs = 4,
+  batch_size = NULL,
+  learning_rate_multiplier = NULL,
+  prompt_loss_weight = 0.1,
+  compute_classification_metrics = FALSE,
+  classification_n_classes = NULL,
+  classification_positive_class = NULL,
+  classification_betas = NULL,
+  suffix = NULL,
+  openai_api_key = openai_key,
+  openai_organization = NULL
+)
+
+# View status of all models:
+ft <- list_fine_tunes(
+  openai_api_key = openai_key,
+  openai_organization = NULL
+)
+
+# Check status on fin-tuned model:
+ft$data[nrow(ft$data),"status"]
+
+# Select (LATEST) model: 
+fine_tuned_model_nr <- nrow(ft$data)
+
+# Check status of fine tuned model: 
+retrieve_fine_tune(
+  ft$data$id[fine_tuned_model_nr],
+  openai_api_key = openai_key,
+  openai_organization = NULL
+)
+
+# List all models: 
+all_models <- list_models(
+  openai_api_key = openai_key
+)
+
+all_models <- data.frame(all_models$data)
+
+#-------------------------------------------------------------------------------
+# Run FT-model on test data
+#-------------------------------------------------------------------------------
+# Run latest fine-tuned model:
+ft_model = ft$data[nrow(ft$data),"fine_tuned_model"]
+
+response_list <- list()
+
+start <- Sys.time()
+
+for(i in 1:nrow(meta_openai)) {
+  success <- FALSE
+  backoff <- 2
+  
+  while (!success) {
+    tryCatch({
+      response_list[[i]] <- openai$Completion$create(
+        model = ft_model,                                                     
+        prompt = paste0(meta_openai$text[i], "\n\n###\n\n"),
+        temperature = 0,                                                      
+        max_tokens = 32L,
+        top_p = 1,
+        frequency_penalty = 0, 
+        presence_penalty = 0
+      )
+      success <- TRUE
+    }, error = function(e) {
+      Sys.sleep(backoff)
+      backoff <- backoff * 2
+      if (backoff > 256) {
+        next
+        #stop("error")
+      }
+    })
+  }
+  progress(i, nrow(meta_openai))
+}
+
+# Runtime: 
+Sys.time() - start 
+
+# Extract choices (i.e., output from OpenAI):
+response_list <- lapply(response_list, function(x) {
+  data.frame(x$choices[[1]]$text)
+})
+
+# Store results in dataframe:
+response <- bind_rows(response_list)
+colnames(response) <- "score"
+
+
+```
+
+
+## Example of robust MNIR function (tweaked with IDF):
+Inspired by: 
+- Taddy: https://arxiv.org/abs/1012.2098
+- Garcia: https://www.sciencedirect.com/science/article/abs/pii/S0304405X22002422
+
+```r
+#-------------------------------------------------------------------------------
+# Functions to estimate MNIR
+#-------------------------------------------------------------------------------
+getMnirLoadings <- function(meta = meta,                  # Data with Y variable
+                            filter = T,                   # Additional filter
+                            dtm =  dtm,                   # Document term Matrix
+                            idfFilter = 12,               # Max IDF value
+                            nr.clusters = 20              # number of clusters used for MNIR implementation
+){
+  
+  ## This function just needs a meta object
+  ## with a filing.period.excess.return variable.
+  ## The PERMNO+ information provided in the repository 
+  ## should make this easily available to many researchers.
+  ## But we note this function will not run without an updated
+  ## metadata file (relative to what we share in the repository).
+  
+  ## initiate cluster
+  cl <- makeCluster(nr.clusters)
+  
+  ## Filter 1: limit with provided filter
+  meta <- meta[filter, ]
+  dtm <- dtm[filter, ]
+  
+  ## Filter 2: take out empty documents
+  filter2 <- row_sums(dtm) != 0
+  meta <- meta[filter2, ]
+  dtm <- dtm[filter2, ]
+  
+  ## Filter 3: take out empty terms
+  filter3 <- col_sums(dtm) != 0
+  dtm <- dtm[, filter3]
+  
+  ## Filter 4: Limit by idf value
+  filter4 <- TermDocFreq(dtm) %>% 
+    filter(idf <= idfFilter) %>% 
+    select(term) %>% 
+    as_vector()
+  dtm <- dtm[,filter4]
+  
+  # Winsorize at 1-99%
+  meta$ret_contempMkt <- Winsorize(meta$ret_contempMkt, probs = c(0.01, 0.99))
+  
+  ## Fit the MNIR model
+  fits <- dmr(cl,
+              covars = meta$ret_contempMkt, 
+              counts = dtm, 
+              bins = NULL,
+              gamma = 0, 
+              nlambda = 10,
+              verb = 2)
+  
+  ## Extract MNIR coefs
+  mnir.coef <- sort(coef(fits)[2,])
+  
+  ## end cluster
+  stopCluster(cl)
+  
+  ## output
+  return(mnir.coef)
+}
+
+structureRobustMnirOutput <- function(MNIRest = MNIRest,  # output of function getMnirLoadings
+                                      wordCount,          # word count 
+                                      filePath = NULL     # output destination
+){ 
+  
+  # Adjust colname
+  names(MNIRest) <- 1:length(MNIRest)
+  
+  # make into a tibble
+  lapply(names(MNIRest), function(cn){
+    temp <- tibble(word = names(MNIRest[[cn]]))
+    temp[[cn]] <- 0
+    temp[[cn]][0 > as.vector(MNIRest)[[cn]]] <- -1
+    temp[[cn]][0 < as.vector(MNIRest)[[cn]]] <- 1
+    temp
+  }) -> MNIRest
+  
+  # aggregate
+  out <- MNIRest[[1]]
+  for(i in 2:length(MNIRest)){out <- full_join(out, MNIRest[[i]])}
+  MNIRest <- out
+  rm(out) 
+  
+  # summarise 
+  MNIRest[,-1] %>% 
+    apply(., 1, function(x){
+      c(positive = sum(x == 1, na.rm=T), 
+        negative = sum(x == -1, na.rm=T), 
+        missing = sum(is.na(x)))
+    }) %>% 
+    t() %>% 
+    as_tibble() %>% 
+    mutate(word = MNIRest[,1]) -> MNIRest
+  MNIRest$word <- unlist(MNIRest$word)
+  names(MNIRest$word) <- NULL
+  
+  # Add information 
+  MNIRest %>%
+    left_join(wordCount) %>%
+    arrange(-(positive-negative)) %>%
+    mutate(positive = positive / no.iterations) %>%
+    mutate(negative = negative / no.iterations) %>%
+    select(word, positive, negative, freq, idf) -> MNIRest
+  
+  # save
+  write.csv(MNIRest, file = filePath, row.names = F)
+  
+  # end
+  return(NULL)}
+```
