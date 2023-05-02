@@ -68,3 +68,13 @@ install_github("ahmedmohamedali/eikonapir") # Installation of Eikon API for R
 
 ```
 
+## One time operation to generate a Python environment: 
+```r
+reticulate::conda_create(envname = "open_ai", packages = "openai", python_version = "3.9")
+# Once the above installation finishes, don't runt the code again.
+
+reticulate::use_condaenv("open_ai")
+openai <- import("openai")
+
+# Add API key
+openai$api_key <- openai_key
