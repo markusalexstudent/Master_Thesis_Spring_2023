@@ -78,3 +78,55 @@ openai <- import("openai")
 
 # Add API key
 openai$api_key <- openai_key
+
+```
+## Example of API call:
+```r
+response_list <- list()
+
+start <- Sys.time()
+
+for(i in 1:nrow(meta_openai)) {
+  success <- FALSE
+  backoff <- 2
+  
+  while (!success) {
+    tryCatch({
+      response_list[[i]] <- openai$Completion$create(
+        model = "text-curie-001",                                    # Model name.
+        prompt = paste("Decide wheter the sentiment of the following text is positive, neutral, or negative.\n", 
+         meta_openai$text[i], 
+         "\nSentiment:", sep = ""),
+        temperature = 0,                                             # Higher temperature, higher randomness of the response
+        max_tokens = 32L,
+        top_p = 1,
+        frequency_penalty = 0, 
+        presence_penalty = 0
+      )
+      success <- TRUE
+    }, error = function(e) {
+      Sys.sleep(backoff)
+      backoff <- backoff * 2
+      if (backoff > 256) {
+        next
+        #stop("error")
+      }
+    })
+  }
+  
+  progress(i, nrow(meta_openai))
+  
+}
+
+# Runtime: 
+Sys.time() - start 
+
+# Extract choices (i.e., output from OpenAI):
+response_list <- lapply(response_list, function(x) {
+  data.frame(x$choices[[1]]$text)
+})
+  
+# Store results in dataframe:
+response <- bind_rows(response_list)
+colnames(response) <- "score"
+meta_openai$sentiment_openai <- response$score
