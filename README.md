@@ -18,3 +18,53 @@ What you need to run the complete script (besides packages in the script):
 - OpenAI API key. Create an account on https://openai.com/
 - Refinitiv Eikon API key. (If you are a student at NHH you can ask the library for a license --> https://nhh.libguides.com/az.php)
 - Docker (needed for web scraping NewsWeb) https://www.docker.com/
+
+## R Libraries:
+```r 
+library(eikonapir)                        # Refinitiv Eikon API for R
+library(RSelenium)                        # Docker and Selenium
+library(rvest)                            # Webscraping
+library(svMisc)                           # Progress tracker
+library(tidyverse)                        # Dplyr etc. 
+library(tidytext)                         # Clean text
+library(textmineR)                        # DTM and TF-IDF filtering
+library(tm)                               # Textmining (incl. stopwords)
+library(textcat)                          # Detect language
+library(cld2)                             # Detect language (superior to textcat --> https://stackoverflow.com/questions/8078604/detect-text-language-in-r)
+library(parallel)                         # Parallel computing
+library(readxl)                           # Load excel files
+library(lubridate)                        # Manipulate dates
+library(PerformanceAnalytics)             # Calculate returns etc. 
+library(quantmod)                         # Stopwords, textual analysis etc.
+library(quanteda)                         # Text analysis
+library(data.table)                       # Work with tables
+library(textir)                           # MNIR ML Model
+library(rrapply)                          # recursively apply a function to elements of a nested list based on a general condition function
+library(kableExtra)                       # Create latex tables
+library(multidplyr)                       # Dplyr with parallel 
+library(openxlsx)                         # Save and read .xlsx
+library(bizdays)                          # Business days 
+library(reticulate)                       # Run Python in R
+library(remotes)                          # Install remote repos (e.g., github)
+library(stringr)                          # Use wrappers
+library(slam)                             # Sparse Lightweight Arrays and Matrices --> convert DTM to sparse matrix
+library(SentimentAnalysis)                # LM dictionary
+library(felm)                             # Panel data regressions
+library(wordcloud)                        # Wordcloud
+library(wordcloud2)                       # Wordcloud2
+library(jsonlite)                         # Create json file for fine tuning
+library(openai)                           # OpenAI for fine-tuning
+library(DescTools)                        # Winsorize
+library(wordcloud2)                       # devtools::install_github("lchiffon/wordcloud2")
+
+```
+## Refinitiv Eikon API for R:
+```r
+install_github("ahmedmohamedali/eikonapir") # Installation of Eikon API for R
+
+# Log on Refinitiv Desktop
+# Get API key --> APPKEY --> Register new app (API: Eikon Data API)
+# Find data keys --> Data Item Browser
+
+```
+
