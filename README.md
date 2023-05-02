@@ -19,6 +19,9 @@ What you need to run the complete script (besides packages in the script):
 - Refinitiv Eikon API key. (If you are a student at NHH you can ask the library for a license --> https://nhh.libguides.com/az.php)
 - Docker (needed for web scraping NewsWeb) https://www.docker.com/
 
+Below, key parts of the script is added (models, fine-tuning, packages). See the script folder for compelte script.
+
+# Extracts from R script
 ## R Libraries:
 ```r 
 library(eikonapir)                        # Refinitiv Eikon API for R
