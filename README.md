@@ -83,7 +83,7 @@ openai <- import("openai")
 openai$api_key <- openai_key
 
 ```
-### Web scraping NewsWeb
+### Web scraping NewsWeb:
 ```r
 
 #-------------------------------------------------------------------------------
