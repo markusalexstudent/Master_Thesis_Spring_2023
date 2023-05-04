@@ -71,7 +71,7 @@ install_github("ahmedmohamedali/eikonapir") # Installation of Eikon API for R
 
 ```
 
-## One time operation to generate a Python environment: 
+### One time operation to generate a Python environment: 
 ```r
 reticulate::conda_create(envname = "open_ai", packages = "openai", python_version = "3.9")
 # Once the above installation finishes, don't runt the code again.
@@ -520,3 +520,31 @@ structureRobustMnirOutput <- function(MNIRest = MNIRest,  # output of function g
   # end
   return(NULL)}
 ```
+### Running robust MNIR w/ IDF
+```r
+MNIRest <- list()
+
+for(i in 1:no.iterations){
+  cat("Iteration", i, "\n")
+  
+  # randomly select 5000 observations for each iteration
+  filter.sample <- (1:nrow(meta[meta$group == "training", ])) %in% 
+    (sample(1:nrow(meta[meta$group == "training", ]), 5000)) # (q)
+  
+  # Call getMnirLoadings function
+  MNIRest[[i]] <- getMnirLoadings(meta = meta[meta$group == "training", ],
+                                  filter = filter.sample,
+                                  dtm =  dtm[meta$group == "training", ],
+                                  idfFilter = 7, #12
+                                  nr.clusters = detectCores()-1)
+}
+
+wordCount <- tibble(word = colnames(dtm), freq = col_sums(dtm), 
+                    idf = TermDocFreq(dtm)$idf)
+
+## structure and save
+structureRobustMnirOutput(MNIRest = MNIRest,
+                          wordCount = wordCount,
+                          filePath = "robustMNIR/ML_score_unigram.csv")
+```
+
