@@ -415,7 +415,7 @@ getMnirLoadings <- function(meta = meta,                  # Data with Y variable
                             filter = T,                   # Additional filter
                             dtm =  dtm,                   # Document term Matrix
                             idfFilter = 12,               # Max IDF value
-                            nr.clusters = 20              # number of clusters used for MNIR implementation
+                            nr.clusters = detectCores()-1 # number of clusters used for MNIR implementation
 ){
   
   ## This function just needs a meta object
