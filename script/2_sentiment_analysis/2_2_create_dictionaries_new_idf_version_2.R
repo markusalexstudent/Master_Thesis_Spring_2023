@@ -21,22 +21,14 @@ th = 0.25
 #-------------------------------------------------------------------------------
 # ML Unigram, full sample 
 #-------------------------------------------------------------------------------
-mlUni <- read_csv("robustMNIR/idf_version/final/ML_score_unigram.csv") #run_19042023_all-three-filters
+mlUni <- read_csv("robustMNIR/ML_score_unigram.csv")
 
 # Positive ML Unigram dictionary: 
 mlUniPos <- mlUni %>% 
-  filter(positive-negative >= 0.6, #prev value = 0.4
+  filter(positive-negative >= 0.6, 
          freq < 2000,
          idf < 7
          )
-
-mlUniPos <- subset(mlUniPos, word != "igaming")
-mlUniPos <- subset(mlUniPos, word != "scanship")
-mlUniPos <- subset(mlUniPos, word != "easysmart")
-mlUniPos <- subset(mlUniPos, word != "laptop")
-mlUniPos <- subset(mlUniPos, word != "bjarnsholt")
-
-head(mlUniPos)
 
 # Save dictionary:
 mlUniPos %>% 
@@ -50,18 +42,6 @@ mlUniNeg <- mlUni %>%
          freq < 2000,
          idf < 7
          ) 
-
-mlUniNeg <- subset(mlUniNeg, word != "telenor")
-mlUniNeg <- subset(mlUniNeg, word != "orkla")
-mlUniNeg <- subset(mlUniNeg, word != "cest")
-mlUniNeg <- subset(mlUniNeg, word != "sas")
-mlUniNeg <- subset(mlUniNeg, word != "dof")
-mlUniNeg <- subset(mlUniNeg, word != "eriksen")
-mlUniNeg <- subset(mlUniNeg, word != "gate")
-mlUniNeg <- subset(mlUniNeg, word != "bakkafrost")
-mlUniNeg <- subset(mlUniNeg, word != "asteks")
-mlUniNeg <- subset(mlUniNeg, word != "georgina")
-mlUniNeg <- subset(mlUniNeg, word != "profit")
 
 # Save dictionary:
 mlUniNeg %>% 
@@ -95,35 +75,13 @@ rm(mlUni, dtm, mnir_senti)
 #-------------------------------------------------------------------------------
 # ML bigrams, full sample 
 #-------------------------------------------------------------------------------
-mlBi <- read_csv("robustMNIR/idf_version/final/ML_score_bigram.csv")
+mlBi <- read_csv("robustMNIR/ML_score_bigram.csv")
 
 # Positive ML Bigram dictionary: 
 mlBiPos <- mlBi %>% 
-  filter(positive-negative >= 0.45, #0.4 for 500_it 7idf BI
-         freq <= 900,
-         #idf <= 8
+  filter(positive-negative >= 0.45, 
+         freq <= 900
          )
-
-mlBiPos <- subset(mlBiPos, !word %in% c("mobile_email", "announced_today", "western_bulk", "l??vestam_zwipe",
-                                        "zwipe_pay", "e_skajem", "akva_group", "scanship_processes",
-                                        "scanship_provides", "residuals_scanship", "taiwan_korea",
-                                        "university_copenhagen", "holding_scanship", 
-                                        "holding_tel", "cleaner_oceans", "bb_clients", 
-                                        "shipping_rasmussengruppen", "aker_solutions", 
-                                        "ose_plt", "solutions_softox", "crayon_help", 
-                                        "inc_nio", "plt_today", "heatcube_thermal", 
-                                        "semisubmersible_drilling", "semisubmersible_drilling",
-                                        "gamborg_andreassen", "q_adjusted", 
-                                        "offices_france", "tokyo_japan",
-                                        "laptop", "contact_hofshagen",  "crayon_group",
-                                        "polight_polight", "platform_drilling", 
-                                        "skajem_jeshuddlestockcom", "scanship_holding",
-                                        "l??vestam_zwipe", "iso_iso", "innovation_group",
-                                        "date_wednesday", "health_care", "magnushofshagencrayoncom_crayon",
-                                        "crayon_takle", "softox_technology",
-                                        "l??vestam_zwipe", "elliptic_labs",
-                                        "selected_zwipe"))
-
 
 # Save dictionary:
 mlBiPos %>% 
@@ -133,40 +91,10 @@ saveRDS(mlBiPos, file = "robustMNIR/mlBiPos.rds")
 
 # Negative ML Bigram dictionary: 
 mlBiNeg <- mlBi %>% 
-  filter(negative-positive >= 0.45,  #0.4 for 500_it 7idf BI
-         freq <= 900,
-        # idf <= 8,
+  filter(negative-positive >= 0.45, 
+         freq <= 900
          ) 
 
-mlBiNeg <- subset(mlBiNeg, !word %in% c("novel_immunotherapies", "argentine_egypt",
-                                        "brazil_argentina", "awilco_drillings", 
-                                        "nyse_ose", "email_presentation", 
-                                        "dronning_eufemias", "eufemias_gate",
-                                        "container_ships", "mpc_container", 
-                                        "lse_zen", "favre_ritufavrenextbiometricscom", 
-                                        "konferansesenter_bryggetorget", 
-                                        "waage_basili", "gross_margin",
-                                        "energy_zenith", "k_arnet",
-                                        "indirectly_japan", "sparebank_nordnorge",
-                                        "zenith_company", "seabird_exploration",
-                                        "nordic_nanovector", "prosafe_se",
-                                        "larnaca_cyprus", "zename_zeniths",
-                                        "exchange_zename", "larnaca_georgina",
-                                        "prosafe_worlds", "lsezen_merkur",
-                                        "vesting_schedule", "tel_cfo",
-                                        "awilco_drilling", "tel_multinational", 
-                                        "today_cest", "andr??_sloth",
-                                        "dam_madsen", "dof_international",
-                                        "dof_listed", "dof_international",
-                                        "dofs_core", "modern_offshoresubsea", 
-                                        "singapore_brazil","cfo_dronen",
-                                        "dof_offers", "psv_charter", 
-                                        "ose_nanov", "bermuda_borr",
-                                        "approximately_cad", "zenith_int",
-                                        "placement_zenith", "cfo_dam",
-                                        "meeting_dof", "beggining_one",
-                                        "date_srs"))
-                                        
 # Save dictionary:
 mlBiNeg %>% 
   pull(word) %>% 
