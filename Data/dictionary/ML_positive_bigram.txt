@@ -122,6 +122,7 @@ digital_transformation
 energy_offshore
 memory_sensing
 company_assigned
+løvestam_zwipe
 firm_period
 heuman_next
 listed_euronext

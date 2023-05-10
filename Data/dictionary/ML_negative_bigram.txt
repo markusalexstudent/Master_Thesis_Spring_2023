@@ -1627,6 +1627,7 @@ valid_annual
 attached_copy
 cooling_solutions
 exercised_options
+andré_sloth
 earlier_today
 total_revenue
 compared_million
