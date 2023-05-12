@@ -1700,7 +1700,7 @@ colnames(idf) <- c("idf", "ngram", "docFreq", "termFreq")
 
 library(plotly)
 
-plot_ly(data = idf, x = ~idf, y = ~docFreq, z = ~termFreq, colors = ~ngram)
+#plot_ly(data = idf, x = ~idf, y = ~docFreq, z = ~termFreq, colors = ~ngram)
 
 #-------------------------------------------------------------------------------
 # Search for words
