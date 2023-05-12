@@ -404,8 +404,8 @@ colnames(response) <- "score"
 
 ### Example of robust MNIR function (tweaked with IDF):
 Inspired by: 
-- Taddy: https://arxiv.org/abs/1012.2098
-- Garcia: https://www.sciencedirect.com/science/article/abs/pii/S0304405X22002422
+- MNIR by Taddy: https://arxiv.org/abs/1012.2098
+- Robust version Garcia: https://www.sciencedirect.com/science/article/abs/pii/S0304405X22002422
 
 ```r
 #-------------------------------------------------------------------------------
