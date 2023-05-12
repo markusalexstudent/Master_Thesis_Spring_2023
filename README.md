@@ -11,7 +11,7 @@ General Info:
   - Plots and tables are in "tables_and_plots".
   - ML lexicons are in "dictionary".
   - Robust MNIR outputs (w/ idf score) are in "robustMNIR".
-  - An csv-file with all scraped press releases can be found in the data folder.
+  - A csv-file with all scraped press releases can be found in the data folder.
 - R script is in the "script" folder.
 - You do not need to run the script from "scratch", i.e. web scrape and run ML/OpenAI Models (these are very time consuming). Just download the data, set working directionary in the script and then run the script. 
 
