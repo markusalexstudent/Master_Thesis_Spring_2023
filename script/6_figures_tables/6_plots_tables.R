@@ -3,7 +3,7 @@
 ################################################################################
 # Preamble, setting working directory
 rm(list = ls())
-setwd("C:/Users/marku/OneDrive/Skrivebord/MASTEROPPGAVE/Master_thesis/Data")
+setwd("C:/Users/marku/OneDrive/Skrivebord/MASTEROPPGAVE/Master_thesis/GITHUB REPOSITORY/Master_Thesis_Spring_2023/Data/")
 options(scipen = 999)
 ## packages
 library(xml2)
@@ -98,6 +98,11 @@ ggsave("tables_and_plots/plots/p1.pdf", plot = p1, width = 7, height = 5)
 rm(eventWindow, p1)
 
 #-------------------------------------------------------------------------------
+# DF data
+#-------------------------------------------------------------------------------
+df <- readRDS("fromR/df_meta.rds")
+
+#-------------------------------------------------------------------------------
 # Frequency graphs
 #-------------------------------------------------------------------------------
 # Frequency of year:
@@ -177,6 +182,51 @@ p <- meta %>%
   geom_line() + 
   guides(fill = "none")
 p
+
+meta <- readRDS("fromR/meta.rds")
+
+p <- meta %>% 
+  group_by(type) %>% 
+  summarise(count = n()) %>% 
+  select(-type) %>% 
+  mutate(type = c("Regulated information required to be disclosed",
+                  "Non-regulatory press releases",
+                  "Inside information")) %>% 
+  ggplot( aes(x=type, y=count)) +
+  geom_bar(stat="identity", fill="blue", width=.75) +
+  xlab("") +
+  ylab("\nNumber of press releases") +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=10),
+        axis.text.x = element_text(angle = 10, hjust = 1),
+        axis.title=element_text(size=12,face="bold"))  
+
+ggsave("tables_and_plots/plots/p13.pdf", plot = p, width = 7, height = 5)
+
+meta$market <- substr(meta$market, 1, 4)
+p <- meta %>% 
+  group_by(market) %>% 
+  summarise(count = n()) 
+p[4,2] <- p[4,2] + p[2,2]
+p <- p[-2, ]
+markets <- c("Euronext Growth", "Euronext Expand", "Oslo Bors")
+p$market <- markets
+
+
+p <- p %>% 
+  ggplot(aes(x=market, y=count)) +
+  geom_bar(stat="identity", fill="blue", width=.75) +
+  xlab("") +
+  ylab("\nNumber of press releases") +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=10),
+        axis.title=element_text(size=12,face="bold"))  
+
+ggsave("tables_and_plots/plots/p14.pdf", plot = p, width = 7, height = 5)
 
 
 #-------------------------------------------------------------------------------
@@ -479,40 +529,6 @@ lm <- meta_openai %>%
         axis.text=element_text(size=9),
         axis.title=element_text(size=12,face="bold"))
 lm
-
-#garciaBi <- meta_openai %>% 
-#  ggplot() +
-#  geom_histogram(aes(x = garcia_sentiBi), 
-#                 breaks = hist(meta_openai$garcia_sentiBi, plot = F)$breaks,
-#                 fill = "orange") +
-#  geom_vline(xintercept = 0, color = "darkgray", linetype = "longdash") +
-#  xlab("") +
-#  ylab("") +
-#  labs(title = "Garcia et al. (Bigrams)") +
-#  theme_bw() +
-#  theme(plot.title = element_text(hjust = 0.5, face = "bold"), 
-#        legend.position = "top",
-#        panel.grid.major = element_blank(), 
-#        panel.grid.minor = element_blank(),
-#        axis.text=element_text(size=9),
-#        axis.title=element_text(size=10,face="bold"))
-
-#garciaUni <- meta_openai %>% 
-#  ggplot() +
-#  geom_histogram(aes(x = garcia_sentiUni), 
-#                 breaks = hist(meta_openai$garcia_sentiUni, plot = F)$breaks,
-#                 fill = "purple") +
-#  geom_vline(xintercept = 0, color = "darkgray", linetype = "longdash") +
-#  xlab("") +
-#  ylab("") +
-#  labs(title = "Garcia et al. (Unigrams)") +
-#  theme_bw() +
-#  theme(plot.title = element_text(hjust = 0.5, face = "bold"), 
-#        legend.position = "top",
-#        panel.grid.major = element_blank(), 
-#        panel.grid.minor = element_blank(),
-#        axis.text=element_text(size=9),
-#        axis.title=element_text(size=10,face="bold"))
 
 all <- ggpubr::ggarrange(lm, mlUni, mlBi, ncol = 3, nrow = 1,
                         common.legend = TRUE, legend = "top") + 
@@ -1685,7 +1701,6 @@ colnames(idf) <- c("idf", "ngram", "docFreq", "termFreq")
 library(plotly)
 
 plot_ly(data = idf, x = ~idf, y = ~docFreq, z = ~termFreq, colors = ~ngram)
-
 
 #-------------------------------------------------------------------------------
 # Search for words

@@ -45,12 +45,12 @@ library(openai)                           # OpenAI for fine-tuning
 library(DescTools)                        # Winsorize
 library(wordcloud2)                       # devtools::install_github("lchiffon/wordcloud2")
 
-setwd("C:/Users/marku/OneDrive/Skrivebord/MASTEROPPGAVE/Master_thesis/Data")
+setwd("C:/Users/marku/OneDrive/Skrivebord/MASTEROPPGAVE/Master_thesis/GITHUB REPOSITORY/Master_Thesis_Spring_2023/Data/")
 
 # Read data: 
 df <- readRDS("fromR/df_meta.rds")
 meta <- readRDS("fromR/meta.rds")
-
+write_delim(meta, file = "post_filtered_data.txt")
 #-------------------------------------------------------------------------------
 # Fama French Three Factor Model
 #-------------------------------------------------------------------------------
