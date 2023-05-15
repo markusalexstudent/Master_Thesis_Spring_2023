@@ -5,7 +5,9 @@ Master thesis in Financial Economics at NHH spring 2023. All files related to th
 
 ## Info
 General Info: 
-- Download link to NewsWeb web scraped from NewsWeb: https://1drv.ms/f/s!AsY3zBKM2RqZhZxbxfFcZA_JUJVZFg?e=KBnkwj
+- Download link to NewsWeb web scraped from NewsWeb: 
+  - Link 1: https://github.com/markusalexstudent/Master_Thesis_Spring_2023/tree/ed6e1eab490b10d6c8c4c11049754191e83696af/Data/csv_files_for_download
+  - Link 2: https://1drv.ms/f/s!AsY3zBKM2RqZhZxbxfFcZA_JUJVZFg?e=KBnkwj
 - The R-script is split into parts, and should be run chronologically. 
 - Data is in the "data" folder.
   - Plots and tables are in "tables_and_plots".
