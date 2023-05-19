@@ -105,6 +105,11 @@ df <- readRDS("fromR/df_meta.rds")
 #-------------------------------------------------------------------------------
 # Frequency graphs
 #-------------------------------------------------------------------------------
+df <- readRDS("fromR/df_meta.rds")
+
+df <- df %>% 
+  mutate(year = as.numeric(substr(time, 7, 10)))
+
 # Frequency of year:
 p <- meta %>% 
   group_by(year) %>% 
@@ -124,6 +129,50 @@ p <- meta %>%
 p
 ggsave("tables_and_plots/plots/p10.pdf", plot = p, width = 7, height = 5)
 
+
+# Frequency by firm: 
+p <- meta %>% 
+  group_by(year) %>% 
+  summarise(uniqueTickers = n_distinct(ticker)) %>% 
+  filter(year < 2023) %>% 
+  ggplot(aes(x=year, y = uniqueTickers)) + 
+  geom_bar(stat="identity", fill="blue", width=.8) +
+  xlab("\nYear") +
+  ylab("Number of press releases\n") +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=9),
+        axis.title=element_text(size=12,face="bold")) +
+  scale_x_continuous(breaks = seq(min(meta$year), max(meta$year), 1), minor_breaks = NULL)
+
+p
+unique(df$market)
+
+p <- meta %>% 
+  filter(year < 2023,
+         lang == "en") %>% 
+  group_by(year) %>% 
+  summarise(uniqueTickers = n_distinct(ticker),
+            uniquePress = n(),
+            pressPerTicker = uniquePress/uniqueTickers) %>% 
+  ggplot(aes(x=uniqueTickers, y = uniquePress, color = year)) + 
+  geom_point() +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=9),
+        axis.title=element_text(size=12,face="bold")) 
+p
+
+meta$ret <- Winsorize(meta$ret, probs = c(0.01, 0.99))
+citation("multidplyr")
+
+p <- meta %>% 
+  ggplot(aes(x = turnover, y = abs(ret))) + 
+  geom_point()
+
+p
 
 # Frequency of tickers:
 p <- meta %>% 
@@ -150,6 +199,7 @@ ggsave("tables_and_plots/plots/p11.pdf", plot = p, width = 8, height = 12)
 
 # Frequency of time of day: 
 meta$hr <- substr(meta$time_of_day, start = 1, stop = 2)
+df$hr <- substr(df$time_of_day, start = 1, stop = 2)
 
 p <- meta %>% 
   group_by(hr) %>% 
@@ -1108,7 +1158,7 @@ ggsave("tables_and_plots/plots/p6.pdf", plot = p6, width = 7, height = 5)
 # Load data:
 meta_openai <- readRDS("regressions/meta_GPT_ML_LM_regression.rds")
 
-seq <- seq(0, 0.5, by = 0.05)
+seq <- seq(0, 1, by = 0.05)
 
 colnames(meta_openai)
 
@@ -1166,7 +1216,7 @@ pos <- class %>%
   filter(sentiment == "pos") %>% 
   ggplot(aes(x = th, y = value, color = method)) + 
   geom_line() +
-  geom_vline(xintercept = max(class$th)/2, color = "darkgray", linetype = "longdash") + 
+  geom_vline(xintercept = 0.25, color = "darkgray", linetype = "longdash") + 
   ylab("") +
   xlab("") +
   scale_color_manual(values = colors) +
@@ -1190,7 +1240,7 @@ neg <- class %>%
   filter(sentiment == "neg") %>% 
   ggplot(aes(x = th, y = value, color = method)) + 
   geom_line() +
-  geom_vline(xintercept = max(class$th)/2, color = "darkgray", linetype = "longdash") + 
+  geom_vline(xintercept = 0.25, color = "darkgray", linetype = "longdash") + 
   ylab("") +
   xlab("Threshold") +
   scale_color_manual(values = colors) +
@@ -1212,7 +1262,7 @@ neu <- class %>%
   filter(sentiment == "neu") %>% 
   ggplot(aes(x = th, y = value, color = method)) + 
   geom_line() +
-  geom_vline(xintercept = max(class$th)/2, color = "darkgray", linetype = "longdash") + 
+  geom_vline(xintercept = 0.25, color = "darkgray", linetype = "longdash") + 
   ylab("") +
   xlab("") +
   scale_color_manual(values = colors) +
