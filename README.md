@@ -421,13 +421,6 @@ getMnirLoadings <- function(meta = meta,                  # Data with Y variable
                             nr.clusters = detectCores()-1 # number of clusters used for MNIR implementation
 ){
   
-  ## This function just needs a meta object
-  ## with a filing.period.excess.return variable.
-  ## The PERMNO+ information provided in the repository 
-  ## should make this easily available to many researchers.
-  ## But we note this function will not run without an updated
-  ## metadata file (relative to what we share in the repository).
-  
   ## initiate cluster
   cl <- makeCluster(nr.clusters)
   
