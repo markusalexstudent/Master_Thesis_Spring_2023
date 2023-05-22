@@ -586,7 +586,7 @@ all <- ggpubr::ggarrange(lm, mlUni, mlBi, ncol = 3, nrow = 1,
 
 all
 
-ggsave("tables_and_plots/plots/p3.pdf", plot = all, width = 8, height = 4)
+ggsave("tables_and_plots/plots/p3.pdf", plot = all, width = 8, height = 3)#4
 
 #-------------------------------------------------------------------------------
 # Histogram of contemporary returns
@@ -908,20 +908,6 @@ p9
 
 ggsave("tables_and_plots/plots/p9.pdf", plot = p9, width = 7, height = 5)
 
-#------------------------------------------------------------------------------
-
-reg <- readRDS("Regressions/reg_lists/reg_wsj.rds")
-
-
-pdf <- data.frame(
-  Positive = c(),
-  Negative = c(),
-  Neutral = c()
-)
-
-
-
-
 #-------------------------------------------------------------------------------
 # Tables of top 20 ML Bi/Unigrams
 #-------------------------------------------------------------------------------
@@ -1212,6 +1198,11 @@ shapes <- c("LM" = 18,
             "ML (Unigrams)" = 19,
             "ML (Bigrams)" = 15)
 
+#lines <- c("LM" = "dashed", 
+#           "ML (Unigrams)" = "dotted",
+#          "ML (Bigrams)" = "longdash")
+
+
 pos <- class %>%
   filter(sentiment == "pos") %>% 
   ggplot(aes(x = th, y = value, color = method)) + 
@@ -1221,6 +1212,7 @@ pos <- class %>%
   xlab("") +
   scale_color_manual(values = colors) +
   scale_shape_manual(values = shapes) +
+#  scale_linetype_manual(values = lines) +
   ggtitle("Positive") +
   labs(color = "") +
   coord_cartesian(ylim = c(0, 12000)) +
