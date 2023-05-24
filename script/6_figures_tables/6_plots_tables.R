@@ -194,7 +194,7 @@ p <- meta %>%
 
 p
 
-ggsave("tables_and_plots/plots/p11.pdf", plot = p, width = 8, height = 12)
+ggsave("tables_and_plots/plots/p11.pdf", plot = p, width = 8, height = 11.5)
 
 
 # Frequency of time of day: 
@@ -514,6 +514,8 @@ ggsave("tables_and_plots/plots/p2.pdf", plot = p2,
 #-------------------------------------------------------------------------------
 # Histogram of sentiment scores grid
 #-------------------------------------------------------------------------------
+meta_openai <- readRDS("regressions/meta_GPT_ML_LM_regression.rds")
+
 mlUni <- meta_openai %>% 
   ggplot() +
   geom_histogram(aes(x = mnir_sentiUni), 
@@ -912,116 +914,7 @@ ggsave("tables_and_plots/plots/p9.pdf", plot = p9, width = 7, height = 5)
 # Tables of top 20 ML Bi/Unigrams
 #-------------------------------------------------------------------------------
 rm(list = ls())
-mlUniPos <- readRDS("robustMNIR/mlUniPos.rds")
-mlUniNeg <- readRDS("robustMNIR/mlUniNeg.rds")
-mlBiPos <- readRDS("robustMNIR/mlBiPos.rds")
-mlBiNeg <- readRDS("robustMNIR/mlBiNeg.rds")
-
-mlUniPos <- mlUniPos[order(mlUniPos$positive, decreasing = T), ]
-mlUniNeg <- mlUniNeg[order(mlUniNeg$negative, decreasing = T), ]
-mlBiPos <- mlBiPos[order(mlBiPos$positive, decreasing = T), ]
-mlBiNeg <- mlBiNeg[order(mlBiNeg$negative, decreasing = T), ]
-mlBiPos$word <- gsub("_", " ", mlBiPos$word)
-mlBiNeg$word <- gsub("_", " ", mlBiNeg$word)
-
-mlUniPos[mlUniPos$word == "amount", ]
-
-mlBiPos$word[grepl("negative", mlBiPos$word, ignore.case = TRUE)]
-
-
-top20 <- data.frame(mlUniNeg = head(mlUniNeg$word, 20), 
-                    mlBiNeg = head(mlBiNeg$word, 20),
-                    mlUniPos = head(mlUniPos$word, 20),
-                    mlBiPos = head(mlBiPos$word, 20))
-
-top20$mlUniNeg <- ifelse(top20$mlUniNeg == "tuesday", 
-                         mlUniNeg[mlUniNeg$word == "split", ]$word, 
-                         top20$mlUniNeg)
-
-top20$mlUniNeg <- ifelse(top20$mlUniNeg == "cad", 
-                         mlUniNeg[mlUniNeg$word == "abandoned", ]$word, 
-                         top20$mlUniNeg)
-
-top20$mlUniNeg <- ifelse(top20$mlUniNeg == "srs", 
-                         mlUniNeg[mlUniNeg$word == "investigation", ]$word, 
-                         top20$mlUniNeg)
-
-top20$mlUniNeg <- ifelse(top20$mlUniNeg == "maximum", 
-                         mlUniNeg[mlUniNeg$word == "bankruptcy", ]$word, 
-                         top20$mlUniNeg)
-
-top20$mlUniNeg <- ifelse(top20$mlUniNeg == "informed", 
-                         mlUniNeg[mlUniNeg$word == "delay", ]$word, 
-                         top20$mlUniNeg)
-
-top20$mlUniNeg <- ifelse(top20$mlUniNeg == "via", 
-                         mlUniNeg[mlUniNeg$word == "strike", ]$word, 
-                         top20$mlUniNeg)
-
-top20$mlUniNeg <- ifelse(top20$mlUniNeg == "fourth", 
-                         mlUniNeg[mlUniNeg$word == "cancelled", ]$word, 
-                         top20$mlUniNeg)
-
-top20$mlUniPos <- ifelse(top20$mlUniPos == "antimicrobial", 
-                         mlUniPos[mlUniPos$word == "synergies", ]$word, 
-                         top20$mlUniPos)
-
-top20$mlUniPos <- ifelse(top20$mlUniPos == "wound", 
-                         mlUniPos[mlUniPos$word == "potentially", ]$word, 
-                         top20$mlUniPos)
-
-top20$mlUniPos <- ifelse(top20$mlUniPos == "manufacturers", 
-                         mlUniPos[mlUniPos$word == "disruptive", ]$word, 
-                         top20$mlUniPos)
-
-top20$mlUniPos <- ifelse(top20$mlUniPos == "firm", 
-                         mlUniPos[mlUniPos$word == "grow", ]$word, 
-                         top20$mlUniPos)
-
-top20$mlUniPos <- ifelse(top20$mlUniPos == "industries", 
-                         mlUniPos[mlUniPos$word == "loi", ]$word, 
-                         top20$mlUniPos)
-
-top20$mlUniPos <- ifelse(top20$mlUniPos == "zwipe", 
-                         mlUniPos[mlUniPos$word == "proven", ]$word, 
-                         top20$mlUniPos)
-
-top20$mlUniPos <- ifelse(top20$mlUniPos == "regimen", 
-                         mlUniPos[mlUniPos$word == "efficient", ]$word, 
-                         top20$mlUniPos)
-
-top20$mlBiNeg <- ifelse(top20$mlBiNeg == "beginning one", 
-                        mlBiNeg[mlBiNeg$word == "unlawful announcement",]$word,
-                        top20$mlBiNeg)
-                      
-top20$mlBiNeg <- ifelse(top20$mlBiNeg == "registered held", 
-                        mlBiNeg[mlBiNeg$word == "offering unlawful",]$word,
-                        top20$mlBiNeg)
-
-top20$mlBiNeg <- ifelse(top20$mlBiNeg == "notwithstanding foregoing", 
-                        mlBiNeg[mlBiNeg$word == "reverse split",]$word,
-                        top20$mlBiNeg)
-
-top20$mlBiPos <- ifelse(top20$mlBiPos == "gaming industry", 
-                        mlBiPos[mlBiPos$word == "continues grow",]$word,
-                        top20$mlBiPos)
-
-top20$mlBiPos <- ifelse(top20$mlBiPos == "igaming industry", 
-                        mlBiPos[mlBiPos$word == "quality content",]$word,
-                        top20$mlBiPos)
-
-top20$mlBiPos <- ifelse(top20$mlBiPos == "b??rs company", 
-                        mlBiPos[mlBiPos$word == "machine learning",]$word,
-                        top20$mlBiPos)
-
-top20$mlBiPos <- ifelse(top20$mlBiPos == "gaming innovation", 
-                        mlBiPos[mlBiPos$word == "charter contract",]$word,
-                        top20$mlBiPos)
-
-top20$mlBiPos <- ifelse(top20$mlBiPos == "also refer", 
-                        mlBiPos[mlBiPos$word == "major milestone",]$word,
-                        top20$mlBiPos)
-
+top20 <- readRDS("robustMNIR/ML_top_ngrams.rds")
 
 colnames(top20) <- c("Unigram", "Bigram", "Unigram", "Bigram")
 top20 
