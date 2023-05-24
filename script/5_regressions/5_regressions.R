@@ -3,7 +3,7 @@
 ################################################################################
 # Preamble, setting working directory
 rm(list = ls())
-setwd("C:/Users/marku/OneDrive/Skrivebord/MASTEROPPGAVE/Master_thesis/Data")
+setwd("[INSERT WORKING DIRECTORY]")
 
 ## packages
 library(stargazer)

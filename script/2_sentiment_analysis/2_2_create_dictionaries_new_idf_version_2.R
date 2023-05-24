@@ -3,7 +3,7 @@
 ################################################################################
 # Preamble, setting working directory
 rm(list = ls())
-setwd("C:/Users/marku/OneDrive/Skrivebord/MASTEROPPGAVE/Master_thesis/GITHUB REPOSITORY/Master_Thesis_Spring_2023/Data/")
+setwd("INSERT WD")
 
 ## packages
 library(tibble)
@@ -198,53 +198,5 @@ saveRDS(meta, file = "robustMNIR/meta_ML_LM_complete.rds")
 nrow(mlBiPos) + nrow(mlBiNeg)
 nrow(mlUniPos) + nrow(mlUniNeg)
 
-#-------------------------------------------------------------------------------
-# Regression check
-#-------------------------------------------------------------------------------
-# Winsorize:
-reg_meta <- meta %>% 
-  mutate(ret_contemp = Winsorize(ret_contemp, probs = c(0.01,0.99)),
-         ret_contempCapm = Winsorize(ret_contempCapm, probs = c(0.01,0.99)),
-         ret_contempMkt = Winsorize(ret_contempMkt, probs = c(0.01, 0.99)),
-         bm = Winsorize(bm, probs = c(0.01, 0.99)),
-         turnover = Winsorize(turnover, probs = c(0.01, 0.99)), 
-         mcap = Winsorize(mcap, probs = c(0.01, 0.99)))
 
-# Add pseudo-count, as there are some volumes that are zero. (log of zero dont work)
-reg_meta[which(reg_meta$turnover == 0),]$turnover <- 
-  reg_meta[which(reg_meta$turnover == 0), ]$turnover + 0.00000001
-
-reg <- list()
-
-reg[[1]] <- lfe::felm(
-  ret_contempMkt ~ log(words) + log(bm) + 
-    log(turnover) + log(mcap)  
-  | trbc_industry + qq_yyyy | 0 | trbc_industry + qq_yyyy,
-  data = reg_meta %>% filter(group == "holdout"), psdef=FALSE)
-
-reg[[2]] <- lfe::felm(
-  ret_contempMkt ~ lm_pos + lm_neg + log(words) + log(bm) + 
-    log(turnover) + log(mcap)  
-  | trbc_industry + qq_yyyy | 0 | trbc_industry + qq_yyyy,
-  data = reg_meta %>% filter(group == "holdout"), psdef=FALSE)
-
-reg[[3]] <- lfe::felm(
-  ret_contempMkt ~ mnir_uni_pos + mnir_uni_neg + log(words) + log(bm) + 
-    log(turnover) + log(mcap)  
-  | trbc_industry + qq_yyyy | 0 | trbc_industry + qq_yyyy,
-  data = reg_meta %>% filter(group == "holdout"), psdef=FALSE)
-
-reg[[4]] <- lfe::felm(
-  ret_contempMkt ~ mnir_bi_pos + mnir_bi_neg + log(words) + log(bm) + 
-    log(turnover) + log(mcap)  
-  | trbc_industry + qq_yyyy | 0 | trbc_industry + qq_yyyy,
-  data = reg_meta %>% filter(group == "holdout"), psdef=FALSE)
-
-reg[[5]] <- lfe::felm(
-  ret_contempMkt ~ ml_lm_pos + ml_lm_neg + log(words) + log(bm) + 
-    log(turnover) + log(mcap)  
-  | trbc_industry + qq_yyyy | 0 | trbc_industry + qq_yyyy,
-  data = reg_meta %>% filter(group == "holdout"), psdef=FALSE)
-
-stargazer::stargazer(reg, type = "text")
 

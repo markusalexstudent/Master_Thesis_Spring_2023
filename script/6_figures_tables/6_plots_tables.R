@@ -3,7 +3,7 @@
 ################################################################################
 # Preamble, setting working directory
 rm(list = ls())
-setwd("C:/Users/marku/OneDrive/Skrivebord/MASTEROPPGAVE/Master_thesis/GITHUB REPOSITORY/Master_Thesis_Spring_2023/Data/")
+setwd("[INSERT WORKING DIRECTORY]")
 options(scipen = 999)
 ## packages
 library(xml2)

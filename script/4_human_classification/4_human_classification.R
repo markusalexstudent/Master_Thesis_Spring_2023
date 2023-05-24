@@ -9,7 +9,7 @@ library(tidytext)                         # Clean text
 library(readxl)                           # Load excel files
 library(lubridate)                        # Manipulate dates
 
-setwd("C:/Users/marku/OneDrive/Skrivebord/MASTEROPPGAVE/Master_thesis/GITHUB REPOSITORY/Master_Thesis_Spring_2023/Data/")
+setwd("[INSERT WORKING DIRECTORY]")
 
 meta_openai <- readRDS("regressions/meta_GPT_ML_LM_regression.rds")
 #-------------------------------------------------------------------------------

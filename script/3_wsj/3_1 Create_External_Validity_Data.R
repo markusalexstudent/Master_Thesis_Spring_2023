@@ -31,11 +31,11 @@ library(slam)
 library(SentimentAnalysis)           
 library(TTR)
 
-setwd("C:/Users/marku/OneDrive/Skrivebord/MASTEROPPGAVE/Master_thesis/GITHUB REPOSITORY/Master_Thesis_Spring_2023/Data/")
+setwd("[INSERT WORKING DIRECTORY]")
 
 # API Keys (EIKON and OpenAI): 
 eikonapir::set_proxy_port(9000L) # (!) Open Refinitiv Eikon Terminal before Launching API (!)  
-eikonapir::set_app_id("c4b851b15e7d40529ee9cb8c562e87ffa5ff0d57")               
+eikonapir::set_app_id("[INSERT API KEY]")               
 
 #-------------------------------------------------------------------------------
 # 3.1 Create external validity data 

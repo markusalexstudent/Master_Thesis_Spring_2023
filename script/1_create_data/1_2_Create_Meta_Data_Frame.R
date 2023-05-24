@@ -46,7 +46,7 @@ setwd("INSERT WORKING DIRECTORY")
 
 # API Keys (EIKON and OpenAI): 
 eikonapir::set_proxy_port(9000L) # (!) Open Refinitiv Eikon Terminal before Launching API (!)  
-eikonapir::set_app_id("b2442fdd2da74b798c1ac90880002344b49ea7a2")  
+eikonapir::set_app_id("") # <-- Insert API key  
 
 #-------------------------------------------------------------------------------
 # 2.1 Creating meta data frame from scraped dataframes
@@ -444,7 +444,7 @@ returns <- meta %>%
 # install_github("ahmedmohamedali/eikonapir")
 
 eikonapir::set_proxy_port(9000L)
-eikonapir::set_app_id("f6011c4c09d44529a90ec2b5c861819526ab7b29") # API Key
+eikonapir::set_app_id("") # API Key
 
 refinitiv_ticker <- read_excel("industry_meta.xlsx")
 meta <- merge(meta, refinitiv_ticker[, c(-3,-4)], by = "ticker") 

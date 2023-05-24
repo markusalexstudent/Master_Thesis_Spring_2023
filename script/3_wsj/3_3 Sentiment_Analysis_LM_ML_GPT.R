@@ -12,7 +12,7 @@ library(quanteda)                         # Tokenizer
 library(tm)
 library(DescTools)
 
-setwd("C:/Users/marku/OneDrive/Skrivebord/MASTEROPPGAVE/Master_thesis/GITHUB REPOSITORY/Master_Thesis_Spring_2023/Data/")
+setwd("[INSERT WORKING DIRECTORY]")
 
 meta_wsj <- readRDS("external_validity_wsj/meta_wsjAdj.rds")
 th <- 0.25
@@ -164,66 +164,6 @@ meta_wsj <- meta_wsj %>%
 
 
 saveRDS(meta_wsj, file = "external_validity_wsj/meta_wsjRegression_v2")
-
-#-------------------------------------------------------------------------------
-# WSJ Regressions | Run
-#-------------------------------------------------------------------------------
-reg_meta <- meta_wsj %>% 
-  mutate(ret_contemp = Winsorize(ret_contemp, probs = c(0.01,0.99)),
-         bm = Winsorize(bm, probs = c(0.01, 0.99)),
-         turnover = Winsorize(turnover, probs = c(0.01, 0.99)), 
-         mcap = Winsorize(mcap, probs = c(0.01, 0.99))  
-  )
-
-reg_meta[which(reg_meta$turnover == 0),]$turnover <- 
-  reg_meta[which(reg_meta$turnover == 0), ]$turnover + 0.00000001
-
-reg <- list()
-
-reg[[1]] <- lfe::felm(
-  ret_contemp ~ log(words) + log(bm) + 
-    log(turnover) + log(mcap)
-  | industry + yearMonth + weekday | 0 | industry + yearMonth + weekday,
-  data = reg_meta)
-
-reg[[2]] <- lfe::felm(
-  ret_contemp ~ lm_pos + lm_neg + log(words) + log(bm) + 
-    log(turnover) + log(mcap)  
-  | industry + yearMonth + weekday | 0 | industry + yearMonth + weekday,
-  data = reg_meta, psdef=FALSE)
-
-reg[[3]] <- lfe::felm(
-  ret_contemp ~ mnir_uni_pos + mnir_uni_neg + log(words) + log(bm) + 
-    log(turnover) + log(mcap)  
-  | industry + yearMonth + weekday | 0 | industry + yearMonth + weekday,
-  data = reg_meta, psdef=FALSE)
-
-reg[[4]] <- lfe::felm(
-  ret_contemp ~ mnir_bi_pos + mnir_bi_neg + log(words) + log(bm) + 
-    log(turnover) + log(mcap)  
-  | industry + yearMonth + weekday | 0 | industry + yearMonth + weekday,
-  data = reg_meta, psdef=FALSE)
-
-reg[[5]] <- lfe::felm(
-  ret_contemp ~ chatgpt_pos + chatgpt_neg + log(words) + log(bm) + 
-    log(turnover) + log(mcap)   
-  | industry + yearMonth + weekday | 0 | industry + yearMonth + weekday,
-  data = reg_meta, psdef=FALSE)
-
-reg[[6]] <- lfe::felm(
-  ret_contemp ~ lm_pos + lm_neg + 
-    + mnir_uni_pos + mnir_uni_neg +
-    mnir_bi_pos + mnir_bi_neg +
-    chatgpt_pos + chatgpt_neg + log(words) + log(bm) + 
-    log(turnover) + log(mcap)   
-  | industry + yearMonth + weekday | 0 | industry + yearMonth + weekday,
-  data = reg_meta, psdef=FALSE)
-
-# Output for R:
-stargazer::stargazer(reg, 
-                     type = "text", 
-                     keep.stat = c("n", "adj.rsq"))
-
 
 #-------------------------------------------------------------------------------
 # Analyze WSJ data using OpenAI gpt-3.5-turbo (do not run)

@@ -4,10 +4,13 @@
 rm(list = ls())
 
 ## Number of iterations for the robust MNIR algorithm
+# Note that this script can take up to 12 hours to run depending on the 
+# computer power.
+
 no.iterations <- 500 # (k)
 
 ## Preamble: set working directory
-setwd("C:/Users/marku/OneDrive/Skrivebord/MASTEROPPGAVE/Master_thesis/GITHUB REPOSITORY/Master_Thesis_Spring_2023/Data/")
+setwd("INSERT WORKING DIRECTORY HERE")
 
 ## Load packages
 library(tibble)

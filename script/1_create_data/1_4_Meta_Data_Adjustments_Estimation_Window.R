@@ -45,7 +45,7 @@ library(openai)                           # OpenAI for fine-tuning
 library(DescTools)                        # Winsorize
 library(wordcloud2)                       # devtools::install_github("lchiffon/wordcloud2")
 
-setwd("C:/Users/marku/OneDrive/Skrivebord/MASTEROPPGAVE/Master_thesis/GITHUB REPOSITORY/Master_Thesis_Spring_2023/Data/")
+setwd("INSERT WD HERE")
 
 # Read data: 
 df <- readRDS("fromR/df_meta.rds")
