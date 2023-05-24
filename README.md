@@ -1,4 +1,4 @@
-# Man vs. Machine | Master Thesis Spring 2023
+# Man vs. Machine | Master Thesis Spring 2023 | Norwegian School of Economics
 ## An applied study comparing a man-made lexicon, a machine learned lexicon, and OpenAI's GPT for sentiment analysis.
 Master thesis in Financial Economics at NHH spring 2023. All files related to the project lies here. 
  
