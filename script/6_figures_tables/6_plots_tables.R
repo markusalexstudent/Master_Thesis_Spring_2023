@@ -3,7 +3,7 @@
 ################################################################################
 # Preamble, setting working directory
 rm(list = ls())
-setwd("[INSERT WORKING DIRECTORY]")
+setwd("C:/Users/marku/OneDrive/Skrivebord/MASTEROPPGAVE/Master_thesis/GITHUB REPOSITORY/Master_Thesis_Spring_2023/Data")
 options(scipen = 999)
 ## packages
 library(xml2)
@@ -282,6 +282,8 @@ ggsave("tables_and_plots/plots/p14.pdf", plot = p, width = 7, height = 5)
 #-------------------------------------------------------------------------------
 # Wordcloud
 #-------------------------------------------------------------------------------
+meta <- readRDS("fromR/metaAdj_v4.rds")      
+
 # Unigrams:
 toks.remove <- readRDS("robustMNIR/toksRemove.rds")
 toksUni <- tokens_ngrams(as.vector(meta$text) %>% 
@@ -333,9 +335,9 @@ htmlwidgets::saveWidget(lc, "fromR/lc3.html", selfcontained = F)
 webshot::webshot("fromR/lc.html", "tables_and_plots/plots/lc1.png", vwidth = 2000, vheight = 2000, delay = 120)
 
 # Individual words:
-man <- letterCloud(toksFreq,"Man", color = "random-dark")
-vs <- letterCloud(toksFreq,"vs.", color = "random-dark")
-machine <- letterCloud(toksFreq,"Machine", color = "random-dark")
+man <- letterCloud(toksFreq,"MAN", color = "random-dark")
+vs <- letterCloud(toksFreq,"VS.", color = "random-dark")
+machine <- letterCloud(toksFreq,"MACHINE", color = "random-dark")
 
 htmlwidgets::saveWidget(man, "tables_and_plots/plots/wordcloud/man.html", selfcontained = F)
 #webshot::webshot("tables_and_plots/plots/wordcloud/man.html", "tables_and_plots/plots/wordcloud/man.png", 
